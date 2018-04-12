@@ -8,14 +8,17 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+
 </head>
 <body>
     
-    <div class="container">
+    <div class="container" id="app">
         <div class="col-sm-6" id="signup">
             <h1>sign up</h1>
-            <input type="text" placeholder="fill your email" id="emailSignup">
-            <input type="password" placeholder="fill your password" id="passwordSignup">
+            <input type="text" placeholder="fill your email" id="emailSignup" onkeyup="validateEmail()"><br>
+            <input type="password" placeholder="fill your password" id="passwordSignup" onkeyup="validatePasswordStrength()">
+            <input type="password" placeholder="repeat your password" id="passwordRepeatSignup" onkeyup ="validatePassword()">
+            <span id="info"></span>
             <button class="btn btn-primary" onclick="signUp()">Sign up</button>
         </div>
         <br>
@@ -24,14 +27,26 @@
             <input type="text" placeholder="fill your email" id="emailSignin">
             <input type="password" placeholder="fill your password" id="passwordSignin">
             <button class="btn btn-primary" onclick="signIn()">Sign In</button>
+        <textarea id="token" v-model="token">token anda ada di sini</textarea>
         </div>
     </div>
 
-    <button onclick="testing()"> testing button</button>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+    new Vue ({
+        el: '#app',
+        data: {
+            token: "token belum didapat"
+        }
+    })
+
+    </script>
     <script>
         function signUp() {
-            let emailInput = document.querySelector('#emailSignup')
-            let passwordInput = document.querySelector('#passwordSignup')
+            let emailInput = document.querySelector('#emailSignup').value
+            let passwordInput = document.querySelector('#passwordSignup').value
+
+            console.log(emailInput + passwordInput)
         axios.post('http://localhost:3000/users/signup', {
             email: emailInput,
             password: passwordInput
@@ -45,26 +60,51 @@
         }
 
         function signIn() {
-            let emailInput = document.querySelector('#emailSignin')
-            let passwordInput = document.querySelector('#passwordSignin')
+            let emailInput = document.querySelector('#emailSignin').value
+            let passwordInput = document.querySelector('#passwordSignin').value
             axios.post('http://localhost:3000/users/signin', {
                 email: emailInput,
                 password: passwordInput
             })
             .then(function(response){
-                alert(response.data.token)
+                alert("token anda " + response.data.token) 
+                let tokenLabel = document.querySelector('#token')
+                console.log(tokenLabel)
+                tokenLabel.value = response.data.token
             })
             .catch(function(err){
                 alert(err)
             })
         }
 
-        function testing() {
-            axios.get('http://localhost:3000/users/testing')
+        function validateEmail() {
+            let emailInput = document.querySelector("#emailSignup")
+            let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             
+            let isCorrect = re.test(String(emailInput.value).toLowerCase());
+            
+            if(!isCorrect) {
+                emailInput.style.border = '2px solid red'
+            } else {
+                emailInput.style.border = '2px solid green'
+            }
         }
 
+        function validatePassword() {
+            let password = document.querySelector("#passwordSignup")
+            let passwordRepeat = document.querySelector("#passwordRepeatSignup")
+            let info = document.querySelector("#info")
+            if(password.value === passwordRepeat.value) {
+                info.innerHTML = "password diulang dengan benar"
+            } else {
+                info.innerHTML ="password belum sama"
+            }
+        }
+
+        function validatePasswordStrength() {
+            
+        }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
 </body>
 </html>

@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
 })
 
 router.get('/testing', function(req, res){
-  res.send("testing")
+  res.send("ini testing berhasil hit server")
 })
 
 router.post('/signup', ctUser.signUp)
