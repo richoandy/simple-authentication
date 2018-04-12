@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+</head>
+<body>
+    
+    <div class="container">
+        <div class="col-sm-6" id="signup">
+            <h1>sign up</h1>
+            <input type="text" placeholder="fill your email" id="emailSignup">
+            <input type="password" placeholder="fill your password" id="passwordSignup">
+            <button class="btn btn-primary" onclick="signUp()">Sign up</button>
+        </div>
+        <br>
+        <div class="col-sm-6" id="signin">
+            <h1>sign in</h1>
+            <input type="text" placeholder="fill your email" id="emailSignin">
+            <input type="password" placeholder="fill your password" id="passwordSignin">
+            <button class="btn btn-primary" onclick="signIn()">Sign In</button>
+        </div>
+    </div>
+
+    <button onclick="testing()"> testing button</button>
+    <script>
+        function signUp() {
+            let emailInput = document.querySelector('#emailSignup')
+            let passwordInput = document.querySelector('#passwordSignup')
+        axios.post('http://localhost:3000/users/signup', {
+            email: emailInput,
+            password: passwordInput
+        })
+        .then(function(response){
+            alert(JSON.stringify(response))
+        })
+        .catch(function(err){
+            alert(err)
+        })
+        }
+
+        function signIn() {
+            let emailInput = document.querySelector('#emailSignin')
+            let passwordInput = document.querySelector('#passwordSignin')
+            axios.post('http://localhost:3000/users/signin', {
+                email: emailInput,
+                password: passwordInput
+            })
+            .then(function(response){
+                alert(response.data.token)
+            })
+            .catch(function(err){
+                alert(err)
+            })
+        }
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</body>
+</html>
