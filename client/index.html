@@ -8,26 +8,29 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
-
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
+    <!-- <input type="text" v-model="testVue"> -->
     <div class="container" id="app">
-        <div class="col-sm-6" id="signup">
-            <h1>sign up</h1>
-            <input type="text" placeholder="fill your email" id="emailSignup" onkeyup="validateEmail()"><br>
-            <input type="password" placeholder="fill your password" id="passwordSignup" onkeyup="validatePasswordStrength()">
-            <input type="password" placeholder="repeat your password" id="passwordRepeatSignup" onkeyup ="validatePassword()">
-            <span id="info"></span>
-            <button class="btn btn-primary" onclick="signUp()">Sign up</button>
-        </div>
-        <br>
-        <div class="col-sm-6" id="signin">
-            <h1>sign in</h1>
-            <input type="text" placeholder="fill your email" id="emailSignin">
-            <input type="password" placeholder="fill your password" id="passwordSignin">
-            <button class="btn btn-primary" onclick="signIn()">Sign In</button>
-        <textarea id="token" v-model="token">token anda ada di sini</textarea>
+        <div class="row">
+            <div class="col-md-6" id="signup" onkeyup="showSignupButton()">
+                <h1>sign up</h1>
+                <input type="text" placeholder="fill your email" id="emailSignup" onkeyup="validateEmail()"><br>
+                <input type="password" placeholder="fill your password" id="passwordSignup" onkeyup="validatePasswordStrength()"> <span id="strength"></span><br>
+                <input type="password" placeholder="repeat your password" id="passwordRepeatSignup" onkeyup ="validatePassword()">
+                <span id="info"></span><br>
+                <button class="btn btn-primary" onclick="signUp()" id="signUpButton">Sign up</button>
+            </div>
+                <br>
+            <div class="col-md-6" id="signin">
+                <h1>sign in</h1>
+                <input type="text" placeholder="fill your email" id="emailSignin"><br>
+                <input type="password" placeholder="fill your password" id="passwordSignin"><br>
+                <button class="btn btn-primary" onclick="signIn()">Sign In</button><br>
+            <span id="labelToken">get your token here</span>
+            <textarea id="token" v-model="token" disabled="true"></textarea>
+            </div>
         </div>
     </div>
 
@@ -36,12 +39,17 @@
     new Vue ({
         el: '#app',
         data: {
-            token: "token belum didapat"
+            token: "token belum didapat",
+            testVue: 'set dari vue'
         }
     })
 
     </script>
     <script>
+        let emailStatus = false
+        let passwordStrength = false
+        let passwordRepeat = false
+
         function signUp() {
             let emailInput = document.querySelector('#emailSignup').value
             let passwordInput = document.querySelector('#passwordSignup').value
@@ -52,10 +60,10 @@
             password: passwordInput
         })
         .then(function(response){
-            alert(JSON.stringify(response))
+            alert("terima kasih sudah mendaftar")
         })
         .catch(function(err){
-            alert(err)
+            console.log(err)
         })
         }
 
@@ -67,13 +75,13 @@
                 password: passwordInput
             })
             .then(function(response){
-                alert("token anda " + response.data.token) 
+                alert("sign in success") 
                 let tokenLabel = document.querySelector('#token')
                 console.log(tokenLabel)
                 tokenLabel.value = response.data.token
             })
             .catch(function(err){
-                alert(err)
+                console.log(err)
             })
         }
 
@@ -85,24 +93,54 @@
             
             if(!isCorrect) {
                 emailInput.style.border = '2px solid red'
+                emailStatus = false
             } else {
                 emailInput.style.border = '2px solid green'
+                emailStatus = true
             }
         }
 
         function validatePassword() {
             let password = document.querySelector("#passwordSignup")
             let passwordRepeat = document.querySelector("#passwordRepeatSignup")
+            let signUpButton = document.querySelector('#signUpButton')
             let info = document.querySelector("#info")
             if(password.value === passwordRepeat.value) {
                 info.innerHTML = "password diulang dengan benar"
+                signUpButton.style.visibility = 'visible'
+                passwordRepeat = true
             } else {
                 info.innerHTML ="password belum sama"
+                passwordRepeat = false
             }
         }
 
         function validatePasswordStrength() {
-            
+            let re = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+
+            let password = document.querySelector("#passwordSignup")
+            let strength = document.querySelector("#strength")
+           
+            console.log(signUpButton)
+            let isStrong = re.test(password.value)
+
+            if(isStrong) {
+                strength.innerHTML = "your password is strong"
+                passwordStrength = true
+                
+            } else {
+                strength.innerHTML = "we recommend you to take care of your password strength, at least 1 uppercase, 1 lowercase, 1 number, 1 special characters, and minimum length is 8"
+                passwordStrength = false
+                
+            }
+        }
+
+        function showSignupButton() {
+            if(emailStatus && passwordRepeat && passwordStrength) {
+                signUpButton.style.visibility = 'visible'
+            } else {
+                signUpButton.style.visibility = 'hidden'
+            }
         }
     </script>
 

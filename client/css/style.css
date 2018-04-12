@@ -1,0 +1,12 @@
+#signUpButton {
+    visibility: hidden
+}
+
+#token { 
+    width: 500px;
+    height: 100px;
+}
+
+#labelToken {
+    background-color: aqua
+}
